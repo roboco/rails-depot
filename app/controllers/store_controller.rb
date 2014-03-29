@@ -7,8 +7,9 @@
 # Visit http://www.pragmaticprogrammer.com/titles/rails4 for more book information.
 #---
 class StoreController < ApplicationController
-	include CurrentCart
-	before_action :set_cart
+  skip_before_action :authorize
+  include CurrentCart
+  before_action :set_cart
   def index
     @products = Product.order(:title)
   end

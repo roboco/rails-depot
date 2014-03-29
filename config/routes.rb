@@ -7,6 +7,18 @@
 # Visit http://www.pragmaticprogrammer.com/titles/rails4 for more book information.
 #---
 Depot::Application.routes.draw do
+  get 'admin' => 'admin#index'
+  controller :sessions do
+    get  'login' => :new
+    post 'login' => :create
+    delete 'logout' => :destroy
+  end
+
+  get "sessions/new"
+  get "sessions/create"
+  get "sessions/destroy"
+  resources :users
+
   resources :orders
   resources :line_items
   resources :carts
@@ -71,4 +83,11 @@ Depot::Application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
+  scope '(:locale)' do
+    resources :orders
+    resources :line_items
+    resources :carts
+    root 'store#index', as: 'store', via: :all
+  end   
+
 end

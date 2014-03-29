@@ -7,6 +7,7 @@
 # Visit http://www.pragmaticprogrammer.com/titles/rails4 for more book information.
 #---
 class CartsController < ApplicationController
+  skip_before_action :authorize, only: [:create, :update, :destroy]
   before_action :set_cart, only: [:show, :edit, :update, :destroy]
   rescue_from ActiveRecord::RecordNotFound, with: :invalid_cart
   # GET /carts
@@ -36,7 +37,7 @@ class CartsController < ApplicationController
 
     respond_to do |format|
       if @cart.save
-        format.html { redirect_to @line_item.cart }
+        format.html { redirect_to @cart, notice: 'Cart was successfully created.' }
         format.json { render action: 'show', status: :created, location: @cart }
       else
         format.html { render action: 'new' }
@@ -65,13 +66,15 @@ class CartsController < ApplicationController
     @cart.destroy if @cart.id == session[:cart_id]
     session[:cart_id] = nil
     respond_to do |format|
-      format.html { redirect_to '/'}
+      format.html { redirect_to store_url }
       format.json { head :no_content }
     end
   end
 
+  # ...
   private
-    # Use callbacks to share common setup or constraints between actions.
+  # ...
+
     def set_cart
       @cart = Cart.find(params[:id])
     end
@@ -80,12 +83,8 @@ class CartsController < ApplicationController
     def cart_params
       params[:cart]
     end
-
     def invalid_cart
       logger.error "Attempt to access invalid cart #{params[:id]}"
-      redirect_to '/', notice: 'invalid cart'
+      redirect_to store_url, notice: 'Invalid cart'
     end
-
-      
-    
 end
